@@ -40,9 +40,9 @@ def reset_cli_args():
 
 
 @pytest.fixture()
-def collection_input(tmp_path_factory):
+def collection_input(tmp_path_factory, path_sufix='test-ÅÑŚÌβŁÈ Collections Input'):
     ''' Creates a collection skeleton directory for build tests '''
-    test_dir = to_text(tmp_path_factory.mktemp('test-ÅÑŚÌβŁÈ Collections Input'))
+    test_dir = to_text(tmp_path_factory.mktemp(path_sufix))
     namespace = 'ansible_namespace'
     collection = 'collection'
     skeleton = os.path.join(os.path.dirname(os.path.split(__file__)[0]), 'cli', 'test_data', 'collection_skeleton')
@@ -467,7 +467,11 @@ def test_build_existing_output_without_force(collection_input):
         collection.build_collection(to_text(input_dir, errors='surrogate_or_strict'), to_text(output_dir, errors='surrogate_or_strict'), False)
 
 
-def test_build_existing_output_with_force(collection_input):
+@pytest.mark.parametrize("path_sufix", [
+    'test-ÅÑŚÌβŁÈ Collections Input 1 with_slash/',
+    'test-ÅÑŚÌβŁÈ Collections Input 2 no slash',
+])
+def test_build_existing_output_with_force(collection_input, path_sufix):
     input_dir, output_dir = collection_input
 
     existing_output = os.path.join(output_dir, 'ansible_namespace-collection-0.1.0.tar.gz')
